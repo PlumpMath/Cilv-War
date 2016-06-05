@@ -1,52 +1,52 @@
 ﻿using UnityEngine;
 
 public class EnemyMovement : ObjectMovement {
-	float timeUpdate = 0;
+	private float _timeUpdate = 0;
 
-	private float timeDelay;
-	public float distanceLookAt = 20f;
+	private float _timeDelay;
+	private PlayerMovement _player;
+
+	public float m_DistanceLookAt = 20f;
 	[HideInInspector] public float currentDistance;
 
-	public PlayerMovement player;
-
 	void Start() {
-		player = FindObjectOfType(typeof(PlayerMovement))as PlayerMovement;
-		timeDelay = Random.Range (6, 9);
-		Transform _player = player.transform;
-		currentDistance = Vector3.Distance(transform.position, _player.position);
+		_player = FindObjectOfType<PlayerMovement>();
+		_timeDelay = Random.Range (6, 9);
+		Transform transform = _player.transform;
+		currentDistance = Vector3.Distance(transform.position, transform.position);
 	}
 
 	public bool isInRange () {
-		Transform _player = player.transform;
-		currentDistance = Vector3.Distance(transform.position, _player.position);
-		if (currentDistance < distanceLookAt)
+		Transform transform = _player.transform;
+		currentDistance = Vector3.Distance(transform.position, transform.position);
+		if (currentDistance < m_DistanceLookAt)
 			return true;
 		else
 			return false;
 	}
 
 	void Update() {
-		if (!GameController.isPause) {
-			Transform _player = player.transform;
-			timeUpdate += Time.deltaTime;
-			if (timeUpdate > timeDelay) {
-				timeDelay = Random.Range (6, 9);
-				timeUpdate = 0;
+		if (!GameController.m_IsPause) {
+			Transform transform = _player.transform;
+			_timeUpdate += Time.deltaTime;
+			if (_timeUpdate > _timeDelay) {
+				_timeDelay = Random.Range (6, 9);
+				_timeUpdate = 0;
 			}
 			if (isInRange ())
-				this.transform.LookAt (_player);
+				this.transform.LookAt (transform);
 			else {
-				enemyTurn ();
+				turnEnemy ();
 			}
-			enemyMove ();
+			moveEnemy ();
 		}
 	}
 
-	private void enemyTurn() {
+	private void turnEnemy() {
 		float turn = 0;
-		if (timeUpdate > 0.55f && timeUpdate < 0.95f) {
+		if (_timeUpdate > 0.55f && _timeUpdate < 0.95f) {
 			turn = (Random.Range(2, 5));
-		} else if (timeUpdate > 6 && timeUpdate < 7.5f) {
+		} else if (_timeUpdate > 6 && _timeUpdate < 7.5f) {
 			turn = (Random.Range(1, 3));
 		} else
 			turn = 0;
@@ -58,8 +58,8 @@ public class EnemyMovement : ObjectMovement {
 
 	}
 
-	private void enemyMove() {
-		if (timeUpdate > 1.9f && timeUpdate < timeDelay / 2) {
+	private void moveEnemy() {
+		if (_timeUpdate > 1.9f && _timeUpdate < _timeDelay / 2) {
 			Vector3 _movement = transform.forward * (Random.value + 1f) / 6;
 			m_Rigidbody.MovePosition(m_Rigidbody.position + _movement);
 		}

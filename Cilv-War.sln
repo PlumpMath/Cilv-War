@@ -1,0 +1,23 @@
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2008
+
+Project("{97251F96-4127-EEC4-B95F-E067F10D75C2}") = "Cilv-War", "Assembly-CSharp.csproj", "{C016BDED-FF71-5EFD-EB27-5D41C2818802}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C016BDED-FF71-5EFD-EB27-5D41C2818802}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C016BDED-FF71-5EFD-EB27-5D41C2818802}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C016BDED-FF71-5EFD-EB27-5D41C2818802}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C016BDED-FF71-5EFD-EB27-5D41C2818802}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(MonoDevelopProperties) = preSolution
+		StartupItem = Assembly-CSharp.csproj
+	EndGlobalSection
+EndGlobal

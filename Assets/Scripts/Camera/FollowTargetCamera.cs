@@ -3,12 +3,9 @@ using UnityEngine;
 public class FollowTargetCamera : MonoBehaviour
 {
     public Transform Target;
-    public float PositionFolowForce = 5f;
-    public float RotationFolowForce = 5f;
-	void Start ()
-	{
+    public float PositionFolowForce = 30f;
+    public float RotationFolowForce = 20f;
 
-	}
 
     void FixedUpdate()
 	{

@@ -2,7 +2,8 @@
 using System;
 
 public class ParticleClonePlay : MonoBehaviour {
-	public ParticleSystem particle;
+	public ParticleSystem m_Particle;
+
 	void Start () {
 		ParticleSystem particle = GetComponent<ParticleSystem> ();
 		particle.Play ();

@@ -1,47 +1,112 @@
 ﻿using UnityEngine;
 
-public class PlayerMovement : MonoBehaviour {
-	private bool isGoUp, isGoBack, isTurnLeft, isTurnRight;
-	private float degree;
-	private AudioSource audioMovement;
-	public GameObject targetGoUp, targetGoBack;
-	public AudioClip audioMoving;
-	private AudioClip audioStanding;
+public class PlayerMovement : ObjectMovement {
+	public AudioSource m_MovementAudio; // Reference to the audio source used to play engine sounds. NB: different to the shooting audio source.
+	public AudioClip m_EngineIdling; // Audio to play when the tank isn't moving.
+	public AudioClip m_EngineDriving; // Audio to play when the tank is moving.
 
-	void Start() { 
-		audioMovement = GetComponent<AudioSource> ();
-		audioStanding = audioMovement.clip;
-		audioMovement.Play ();
-		StandMovement ();
-	}
+	public string m_EPlayerZone = "";
+	public float m_TurnSpeed = 180f;
+	private bool isLeft = false,
+	isRight = false,
+	isTop = false,
+	isBottom = false;
+
 
 	void FixedUpdate() {
-		if (isGoUp) transform.position = Vector3.Lerp (transform.position, targetGoUp.transform.position, Time.deltaTime);
-		if (isGoBack) transform.position = Vector3.Lerp (transform.position, targetGoBack.transform.position, Time.deltaTime);
-		if (isTurnRight) {
-			degree += 1.3f;
-			Quaternion tempRotation = Quaternion.AngleAxis (degree, Vector3.up);
-			transform.rotation = Quaternion.Slerp (transform.rotation, tempRotation, .05f);
+		
+		playerTurn();
+		EngineAudio();
+
+		playerMovement();
+	}
+	void Update(){
+		banphim ();
+	}
+	void banphim(){
+		if(Input.GetKey(KeyCode.A)){
+			isLeft = true;
 		}
-		if (isTurnLeft) {
-			degree -= 1.3f;
-			Quaternion tempRotation = Quaternion.AngleAxis (degree, Vector3.up);
-			transform.rotation = Quaternion.Slerp (transform.rotation, tempRotation, .05f);
+		else if(Input.GetKey(KeyCode.D)){
+			isRight = true;
+		}
+		else if(Input.GetKey(KeyCode.W)){
+			isTop = true;
+		}
+		else if(Input.GetKey(KeyCode.S)){
+			isBottom = true;
+		}
+		else notAction ();
+	}
+	public void turnLeft() { isLeft = true;	}
+
+	public void turnRight() { isRight = true;	}
+
+	public void goUp() { isTop = true;	}
+
+	public void goBack() { isBottom = true;  }
+
+	public void notAction() {
+		isLeft = false;
+		isRight = false;
+		isBottom = false;
+		isTop = false;
+	}
+
+	private void playerMovement() {
+		// Create a vector in the direction the tank is facing with a magnitude based on the input, speed and the time between frames.
+		Vector3 movement = new Vector3(0, 0, 0);
+		if (isTop) {
+			movement = transform.forward * m_Speed * Time.deltaTime;
+		} else if (isBottom) {
+			movement = -transform.forward * m_Speed * Time.deltaTime;
+		}
+
+		// Apply this movement to the rigidbody's position.
+		m_Rigidbody.MovePosition(m_Rigidbody.position + movement);
+	}
+
+	private void playerTurn() {
+		// Determine the number of degrees to be turned based on the input, speed and time between frames.
+		float turn = 0f;
+		if (isLeft) {
+			turn = -m_TurnSpeed * Time.deltaTime;
+		} else if (isRight) {
+			turn = m_TurnSpeed * Time.deltaTime;
+		}
+
+		// Make this into a rotation in the y axis.
+		Quaternion turnRotation = Quaternion.Euler(0f, turn, 0f);
+
+		// Apply this rotation to the rigidbody's rotation.
+		m_Rigidbody.MoveRotation(m_Rigidbody.rotation * turnRotation);
+	}
+
+	private void OnTriggerEnter(Collider other) {
+		if (other.gameObject.tag == "Powerfull") {
+			Destroy(other.gameObject);
+			Collider collider = GameObject.Find("Player").GetComponent < Collider > ();
+			TankHealth targetHealth = collider.GetComponent < TankHealth > ();
+			float _add = -50f;
+			targetHealth.TakeDamage(_add, collider);
 		}
 	}
 
-	public void GoUp () { isGoUp = true; AudioMoving (); }
-	public void GoBack () { isGoBack = true; AudioMoving (); }
-	public void TurnLeft () { isTurnLeft = true; }
-	public void TurnRight () { isTurnRight = true; }
-	public void StandMovement () { isGoUp = isGoBack = isTurnLeft = isTurnRight = false; 
-		if (audioMovement.clip == audioMoving)
-			audioMovement.clip = audioStanding;
-		audioMovement.Play ();
-	}
-	private void AudioMoving () {
-		if (audioMovement.clip == audioStanding)
-			audioMovement.clip = audioMoving;
-		audioMovement.Play ();
+	public void EngineAudio() {
+		if (isLeft || isRight) {
+			if (m_MovementAudio.clip == m_EngineDriving) {
+				m_MovementAudio.clip = m_EngineIdling;
+				m_MovementAudio.Play();
+			}
+		}
+		if (isTop || isBottom) {
+			// Otherwise if the tank is moving and if the idling clip is currently playing...
+			if (m_MovementAudio.clip == m_EngineIdling) {
+				// ... change the clip to driving and play.
+				m_MovementAudio.clip = m_EngineDriving;
+				//	m_MovementAudio.pitch = Random.Range(m_OriginalPitch - m_PitchRange, m_OriginalPitch + m_PitchRange);
+				m_MovementAudio.Play();
+			}
+		}
 	}
 }

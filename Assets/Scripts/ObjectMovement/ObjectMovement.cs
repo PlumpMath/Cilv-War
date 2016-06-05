@@ -2,13 +2,8 @@
 
 	public class ObjectMovement : MonoBehaviour {
 		public float m_Speed = 7f;
-		// How fast the tank moves forward and back.
-		
 		public float m_PitchRange = 0.2f;
-		// The amount by which the pitch of the engine noises can vary.
-
 		protected Rigidbody m_Rigidbody;
-		// Reference used to move the tank.
 
 		private void Awake() {
 			m_Rigidbody = GetComponent < Rigidbody > ();
